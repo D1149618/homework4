@@ -1,4 +1,4 @@
-<html>
+ <html>
 
 <head>
   <title>Express</title>
@@ -6,8 +6,49 @@
 </head>
 
 <body>
-  <h1>Express</h1>
-  <p>Welcome to Express</p>
+  <h1>Rent</h1>
+  <p>Suite or Building</p>
+
+  <!--產生 可以選擇suite 或是 building 的選單 以及按鈕-->
+    <form id="selectform">
+        <select id="rent" name="rent">
+        <option value="suite">Suite</option>
+        <option value="building">Building</option>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+  <p id="log"></p>
+<script>
+  const form = document.getElementById('selectform');
+  form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const name = document.getElementById('rent').value;
+    const res = await fetch('/api',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({name})
+    });
+    if(res.ok){
+      const response = await res.json();
+      // document.getElementById('log').innerHTML = name.toString();
+      let formattedResult;
+      if(name.toString() == 'suite'){
+        formattedResult = response.map(row =>  `Year: ${row.year}, Rent: ${row.suite}`).join('<br>');
+      }
+      else{
+        formattedResult = response.map(row =>  `Year: ${row.year}, Rent: ${row.building}`).join('<br>');
+      }
+      // const formattedResult = response.map(row =>  `Year: ${row.year}, Rent: ${row.building}`).join('<br>');
+      document.getElementById('log').innerHTML = formattedResult;
+    }
+    else{
+        document.getElementById('log').textContent = 'Error';
+    }
+  });
+</script>
+
 </body>
 
 </html>
